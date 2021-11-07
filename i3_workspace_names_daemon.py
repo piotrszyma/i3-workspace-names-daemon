@@ -46,10 +46,18 @@ def build_rename(i3, app_icons, args):
     verbose = args.verbose
 
     def get_icon_or_name(leaf, length):
+        name = None
+
         for identifier in ('name', 'window_title', 'window_instance', 'window_class'):
             name = getattr(leaf, identifier, None)
             if name is None:
                 continue
+
+            name_chunks = name.split(' - ')
+            if len(name_chunks) > 1 and 'Visual Studio Code' in name_chunks:
+                project_name = name_chunks[-2]
+                return icons['code'] + ' [' + project_name + ']'
+
             for name_re in app_icons.keys():
                 if re.match(name_re, name, re.IGNORECASE) \
                    and app_icons[name_re] in icons:
